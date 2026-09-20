@@ -674,13 +674,13 @@ export default function PublicLanding() {
             </h1>
 
             <p className="hero-subtitle">
-              Continuous synthetic aperture radar (SAR) surveillance paired with hydrodynamic drift trajectory modeling defending India's 7,516 km sovereign coastline, sensitive marine national parks, and artisanal fishing zones under the National Oil Spill Disaster Contingency Plan (NOS-DCP).
+              Continuous synthetic aperture radar (SAR) surveillance paired with hydrodynamic drift trajectory modeling defending India's 11,098.81 km sovereign coastline, sensitive marine national parks, and artisanal fishing zones under the National Oil Spill Disaster Contingency Plan (NOS-DCP).
             </p>
 
             <div className="hero-metrics-strip">
               <div className="hero-metric-item">
-                <span className="hero-metric-num">{stats?.active_spills ?? spillMarkers.length}</span>
-                <span className="hero-metric-label">Active Slicks Monitored</span>
+                <span className="hero-metric-num">11,098.81 km</span>
+                <span className="hero-metric-label">India's Coastline Covered</span>
               </div>
               <div className="hero-metric-divider" />
               <div className="hero-metric-item">
@@ -689,8 +689,8 @@ export default function PublicLanding() {
               </div>
               <div className="hero-metric-divider" />
               <div className="hero-metric-item">
-                <span className="hero-metric-num">1554</span>
-                <span className="hero-metric-label">Coast Guard 24/7 Hotline</span>
+                <span className="hero-metric-num">{stats?.active_spills ?? spillMarkers.length}</span>
+                <span className="hero-metric-label">Active Slicks Monitored</span>
               </div>
             </div>
 
@@ -857,12 +857,12 @@ export default function PublicLanding() {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">7,516 KM EEZ</div>
+          <div className="stat-label">India's Coastline Covered</div>
           <div className="stat-value">
-            {stats?.coastline_affected_km ? Number(stats.coastline_affected_km).toFixed(1) : '144.9'}<span>km</span>
+            11,098.81<span>km</span>
           </div>
           <div className="stat-desc">
-            Coastline buffer monitoring near fishing settlements & nesting beaches
+            Sovereign coastline & island territories monitored under active orbital SAR surveillance
           </div>
         </div>
       </section>
