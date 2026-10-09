@@ -391,7 +391,7 @@ export default function TelemetryConfidenceView({
               {windSpeed < 3.0
                 ? `Surface wind speed of ${windSpeed} m/s falls below the Bragg resonance threshold (< 3.0 m/s), creating specular reflection calms. Combined with weak attenuation (${contrastDb} dB) and amorphous shape (${elongationVal}:1), physics indicators suggest natural low-wind dampening rather than mineral crude oil.`
                 : isLookalike
-                  ? `Surface wind speed of ${windSpeed} m/s is within the active wave window, but low backscatter attenuation (${contrastDb} dB) and shape (${elongationVal}:1) indicate natural surface films or look-alike dampening rather than mineral crude.`
+                  ? `Surface wind speed of ${windSpeed} m/s is within the active wave window. Classified as look-alike by the U-Net segmentation model (natural surface films or wave dampening rather than mineral crude).`
                   : (isCleanSea
                       ? `Surface backscatter shows uniform sea roughness (${contrastDb} dB contrast) under ${windSpeed} m/s wind. No anomalous hydrocarbon damping signatures observed.`
                       : `Surface wind speed (${windSpeed} m/s) supports persistent dark slick backscatter suppression without false alarms. Sharp contrast (${contrastDb} dB) and linear elongation (${elongationVal}:1) confirm capillary wave damping along a moving vessel trajectory.`)}
