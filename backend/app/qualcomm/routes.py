@@ -109,6 +109,27 @@ async def get_qualcomm_explanation(
             ]
         })
 
+    # Check if this is an exempted natural look-alike feature
+    is_lookalike = (
+        spill.validation_status == "lookalike" or
+        "lookalike" in spill.name.lower() or
+        (spill.model_confidence and (spill.model_confidence.get("final_class") == "Look-alike" or
+         (spill.model_confidence.get("final_probabilities", {}).get("lookalike", 0) >
+          spill.model_confidence.get("final_probabilities", {}).get("oil", 0))))
+    )
+
+    if is_lookalike:
+        return {
+            "source": "not_applicable",
+            "model": None,
+            "explanation": "Classified as a natural look-alike by the U-Net segmentation model. No vessel attribution was run.",
+            "latency_ms": None,
+            "deterministic_legal_notice": None,
+            "candidate_count": 0,
+            "top_candidate": None,
+            "error": None
+        }
+
     if not candidates:
         raise HTTPException(status_code=400, detail="No suspect evaluation available for this spill yet")
 
