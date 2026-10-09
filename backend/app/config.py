@@ -34,6 +34,9 @@ class Settings(BaseSettings):
     # External APIs
     AISSTREAM_API_KEY: Optional[str] = None
     CDS_API_KEY: Optional[str] = None
+    QUALCOMM_API_URL: Optional[str] = None
+    QUALCOMM_API_KEY: Optional[str] = None
+    QUALCOMM_MODEL: Optional[str] = None
 
     # Drift simulation defaults
     DRIFT_BACKWARD_HOURS: int = 24
@@ -50,6 +53,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = (str(ENV_PATH), ".env")
         case_sensitive = True
+        extra = "ignore"
 
 
 settings = Settings()
