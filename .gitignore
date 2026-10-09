@@ -98,6 +98,7 @@ desktop.ini
 # --- External & Large Unrelated Folders ---
 Capabl-AI-Career-Decision-Simulator/
 backend/ml/checkpoints/
+backend/data/demo_dataset/
 
 # --- Logs ---
 backend/logs/
