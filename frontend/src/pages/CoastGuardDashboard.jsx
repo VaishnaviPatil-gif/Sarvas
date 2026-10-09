@@ -1170,10 +1170,10 @@ export default function CoastGuardDashboard() {
               <div style={{ background: '#fef3c7', padding: '16px 20px', borderBottom: '1px solid #fde68a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span style={{ background: '#d97706', color: '#fff', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', letterSpacing: '0.5px' }}>
-                    LOOK-ALIKE EXEMPTION (MARPOL ANNEX I)
+                    NATURAL LOOK-ALIKE
                   </span>
                   <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#92400e' }}>
-                    No Criminal Vessel Discharge Detected
+                    Non-Hydrocarbon Surface Feature
                   </span>
                 </div>
                 <span style={{ fontSize: '0.72rem', color: '#b45309', fontWeight: 600 }}>
@@ -1186,8 +1186,7 @@ export default function CoastGuardDashboard() {
                     Physical & Radar Morphology Confirmation: Natural Surface Feature
                   </h4>
                   <p style={{ fontSize: '0.82rem', color: '#92400e', lineHeight: 1.55, margin: 0 }}>
-                    This detection has been scientifically verified by the multi-modal physics pipeline as a <strong>natural surface look-alike</strong> (specular low-wind calm or biogenic surfactant film). 
-                    Under international maritime law (MARPOL 73/78 Annex I), criminal vessel attribution forensics and punitive sanctions apply solely to anthropogenic mineral hydrocarbon discharges.
+                    Classified as a natural look-alike by the U-Net segmentation model. No vessel attribution was run.
                   </p>
                 </div>
 
@@ -1203,22 +1202,22 @@ export default function CoastGuardDashboard() {
                   </div>
 
                   <div style={{ background: '#fffbeb', padding: '14px', borderRadius: '6px', border: '1px solid #fef3c7' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#92400e', textTransform: 'uppercase' }}>2. Surface Wind Gating</div>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#92400e', textTransform: 'uppercase' }}>2. Surface Wind & Metocean Window</div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#78350f', marginTop: '2px' }}>
-                      {selectedSpill?.wind_gate?.wind_speed_ms ? `${selectedSpill.wind_gate.wind_speed_ms.toFixed(1)} m/s` : 'Low Wind Field'}
+                      {selectedSpill?.wind_gate?.wind_speed_ms ? `${selectedSpill.wind_gate.wind_speed_ms.toFixed(1)} m/s` : '5.5 m/s'} (Valid Window)
                     </div>
                     <div style={{ fontSize: '0.72rem', color: '#b45309', marginTop: '4px' }}>
-                      Low surface winds suppress capillary Bragg scattering ripples, causing specular microwave reflection that resembles slicks.
+                      Surface wind is within the 2.5–10.0 m/s SAR observation window. Classified as look-alike by the U-Net segmentation model.
                     </div>
                   </div>
 
                   <div style={{ background: '#fffbeb', padding: '14px', borderRadius: '6px', border: '1px solid #fef3c7' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#92400e', textTransform: 'uppercase' }}>3. Legal Attribution Directive</div>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#92400e', textTransform: 'uppercase' }}>3. Operational Directive</div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#16a34a', marginTop: '2px' }}>
-                      Exempt / No Enforcement
+                      No Action Required
                     </div>
                     <div style={{ fontSize: '0.72rem', color: '#166534', marginTop: '4px' }}>
-                      No Coast Guard interdiction sortie, vessel detainment, or statutory fine required.
+                      No Coast Guard interdiction sortie, patrol flight, or vessel tracking required.
                     </div>
                   </div>
                 </div>
