@@ -157,3 +157,9 @@ export const aisAPI = {
   start: () => client.post('/api/ais/start'),
   stop: () => client.post('/api/ais/stop'),
 };
+
+// === Qualcomm Cloud AI API ===
+export const qualcommAPI = {
+  getExplanation: (spillId) => client.get(`/api/qualcomm/explain/${spillId}`),
+};
+
