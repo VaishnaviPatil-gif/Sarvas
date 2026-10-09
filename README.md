@@ -135,7 +135,7 @@ The repository includes 6 calibrated Sentinel-1 test scenes with matching ground
 | :--- | :--- | :--- | :--- |
 | `demo_oil_spill_large.png` | **Mineral Oil Spill** | Class: `Oil` (High Conf) | Sharp geometric boundaries, high radar backscatter damping (-6.2 dB contrast). |
 | `demo_oil_spill_moderate.png` | **Mineral Oil Spill** | Class: `Oil` (High Conf) | Medium elongation ratio, drifting along dominant CMEMS current vector. |
-| `demo_lookalike_low_wind.png` | **Low-Wind Sea Area** | Class: `Look-alike` | Diffuse edges, wind speed < 3 m/s; successfully rejected to prevent false alarm. |
+| `demo_lookalike_low_wind.png` | **Natural Look-Alike** | Class: `Look-alike` | Diffuse boundary, classified as look-alike by the U-Net segmentation model; successfully rejected to prevent false alarm. |
 | `demo_lookalike_calm_water.png`| **Calm Water Patch** | Class: `Look-alike` | Zero backscatter gradient, uniform interior standard deviation. |
 | `demo_clean_sea_offshore.png` | **Open Ocean** | Class: `Clean Sea` | Homogeneous ocean roughness; no slick polygons generated. |
 | `demo_clean_sea_shipping_corridor.png` | **Shipping Lane** | Class: `Clean Sea` | Regular sea clutter, no hydrocarbons detected. |
