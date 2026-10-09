@@ -1133,7 +1133,7 @@ export default function CoastGuardDashboard() {
                 {
                   label: 'AIS Transponder Blackout',
                   desc: hasGap
-                    ? `${gapMin}-min deliberate transponder gap during estimated discharge window near centroid.`
+                    ? `${gapMin}-min transponder gap during estimated discharge window near centroid.`
                     : 'Transponder maintained continuous broadcast with no anomalous telemetry gaps.',
                   score: Math.round(s.ais_gap_score ?? 0),
                   weight: 20,
@@ -1141,7 +1141,7 @@ export default function CoastGuardDashboard() {
                 {
                   label: 'Speed Reduction Anomaly',
                   desc: hasSpeedAnomaly
-                    ? 'Deceleration below operational cruising speed (slow-steaming illegal tank wash signature).'
+                    ? 'Deceleration below operational cruising speed (speed reduction consistent with discharge).'
                     : 'Vessel maintained standard commercial cruising speed throughout transit.',
                   score: Math.round(s.speed_anomaly_score ?? 0),
                   weight: 15,
@@ -1264,8 +1264,13 @@ export default function CoastGuardDashboard() {
                           <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f2e59', marginTop: '2px' }}>
                             {((s.confidence || 0.86) * 100).toFixed(0)}%
                           </div>
-                          <div style={{ fontSize: '0.62rem', color: '#16a34a', fontWeight: 700 }}>
-                            HIGH CORRELATION
+                          <div style={{
+                            fontSize: '0.62rem',
+                            fontWeight: 800,
+                            letterSpacing: '0.4px',
+                            color: (s.total_score ?? 0) >= 70 ? '#dc2626' : (s.total_score ?? 0) >= 40 ? '#d97706' : '#64748b'
+                          }}>
+                            {(s.total_score ?? 0) >= 70 ? 'STRONG CORRELATION' : (s.total_score ?? 0) >= 40 ? 'MODERATE CORRELATION' : 'WEAK CORRELATION'}
                           </div>
                         </div>
                       </div>
