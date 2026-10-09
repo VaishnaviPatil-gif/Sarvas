@@ -172,3 +172,31 @@ async def explain_attribution(spill: Dict[str, Any], candidates: List[Dict[str, 
         "generated_at": None,
         "error": error
     }
+
+
+def build_legal_notice(spill: Dict[str, Any], vessel: Dict[str, Any]) -> str:
+    """
+    Deterministic static template. No LLM involved, guaranteeing
+    zero statutory hallucinations or invented section numbers.
+    """
+    return (
+        "====================================================================\n"
+        "                  NOTICE OF INVESTIGATIVE LEAD\n"
+        "             INDIAN COAST GUARD MARITIME OPERATIONS\n"
+        "====================================================================\n"
+        f"INCIDENT IDENTIFIER : {spill.get('name', 'N/A')}\n"
+        f"COORDINATES         : {spill.get('centroid_lat', 'N/A')}°N, {spill.get('centroid_lon', 'N/A')}°E\n"
+        f"ESTIMATED EXTENT    : {spill.get('area_sq_km', 'N/A')} sq km\n"
+        "--------------------------------------------------------------------\n"
+        f"TARGET VESSEL       : {vessel.get('vessel_name') or vessel.get('name', 'N/A')}\n"
+        f"MMSI IDENTIFIER     : {vessel.get('vessel_mmsi') or vessel.get('mmsi', 'N/A')}\n"
+        f"ATTRIBUTION SCORE   : {vessel.get('total_score') or vessel.get('score', 'N/A')}/100\n"
+        f"LEGAL BASIS         : {LEGAL_BASIS}\n"
+        "--------------------------------------------------------------------\n"
+        "OPERATIONAL CAVEAT:\n"
+        "This score is a circumstantial mathematical likelihood derived from\n"
+        "hydrodynamic drift trajectories and kinematic AIS anomaly flags.\n"
+        "It constitutes an investigative lead for boarding and physical\n"
+        "inspection, not an administrative or judicial finding of liability.\n"
+        "===================================================================="
+    )
