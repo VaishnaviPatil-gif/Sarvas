@@ -97,6 +97,7 @@ from app.gis_routes import router as gis_router
 from app.audit.routes import router as audit_router
 from app.realtime.routes import router as realtime_router
 from app.ais.routes import router as ais_router
+from app.qualcomm.routes import router as qualcomm_router
 
 app.include_router(auth_router)
 app.include_router(spills_router)
@@ -110,6 +111,7 @@ app.include_router(gis_router)
 app.include_router(audit_router)
 app.include_router(realtime_router)
 app.include_router(ais_router)
+app.include_router(qualcomm_router)
 
 
 @app.api_route("/", methods=["GET", "HEAD"])
